@@ -1,3 +1,4 @@
+use regex::RegexBuilder;
 use std::fs::read_to_string;
 
 mod aoc_utils;
@@ -36,12 +37,32 @@ fn main() {
     }
 }
 
-
 fn part1(input: &str) -> isize {
-    todo!()
+    let re = RegexBuilder::new(r"mul\((?<n1>\d+),(?<n2>\d+)\)")
+        .build()
+        .unwrap();
+    re.captures_iter(input).fold(0, |a, c| {
+        a + c["n1"].parse::<isize>().unwrap() * c["n2"].parse::<isize>().unwrap()
+    })
 }
 
-
 fn part2(input: &str) -> isize {
-    todo!()
+    let re = RegexBuilder::new(r"(?:mul\((?<n1>\d+),(?<n2>\d+)\))|(?<dont>don't)|(?<do>do)")
+        .build()
+        .unwrap();
+    let mut mul = true;
+
+    re.captures_iter(input).fold(0, |a, c| {
+        if let Some(_) = c.name("do") {
+            mul = true;
+            a
+        } else if let Some(_) = c.name("dont") {
+            mul = false;
+            a
+        } else if mul {
+            a + c["n1"].parse::<isize>().unwrap() * c["n2"].parse::<isize>().unwrap()
+        } else {
+            a
+        }
+    })
 }
