@@ -62,61 +62,61 @@ fn search_directional(
     accum: &mut isize,
 ) {
     let current_char = map[target_row][target_col]; 
-    // println!("Current character is {} at row {}, column {}", 
-    //     current_char, 
-    //     target_row + 1, 
-    //     target_col + 1); 
-    if target_char == current_char {
-        println!(
-            "\'{}\' at row {}, column {}",
-            target_char,
-            target_row + 1,
-            target_col + 1
-        );
-        match target_char {
-            'M' => {
-                if target_row as isize + (dir_row as isize) >= 0
-                    && target_row as isize + (dir_row as isize) < map.len() as isize
-                    && target_col as isize + (dir_col as isize) >= 0
-                    && target_col as isize + (dir_col as isize) < map[target_row].len() as isize
-                {
-                    search_directional(
-                        map,
-                        target_row.saturating_add_signed(dir_row),
-                        target_col.saturating_add_signed(dir_col), 
-                        dir_row,
-                        dir_col,
-                        'A',
-                        accum,
-                    );
+        // println!("Current character is {} at row {}, column {}", 
+        //     current_char, 
+        //     target_row + 1, 
+        //     target_col + 1); 
+        if target_char == current_char {
+            println!(
+                "\'{}\' at row {}, column {}",
+                target_char,
+                target_row + 1,
+                target_col + 1
+            );
+            match target_char {
+                'M' => {
+                    if target_row as isize + (dir_row as isize) >= 0
+                        && target_row as isize + (dir_row as isize) < map.len() as isize
+                        && target_col as isize + (dir_col as isize) >= 0
+                        && target_col as isize + (dir_col as isize) < map[target_row].len() as isize
+                    {
+                        search_directional(
+                            map,
+                            target_row.saturating_add_signed(dir_row),
+                            target_col.saturating_add_signed(dir_col), 
+                            dir_row,
+                            dir_col,
+                            'A',
+                            accum,
+                        );
+                    }
                 }
-            }
-
-            'A' => {
-                if target_row as isize + (dir_row as isize) >= 0
-                    && target_row as isize + (dir_row as isize) < map.len() as isize
-                    && target_col as isize + (dir_col as isize) >= 0
-                    && target_col as isize + (dir_col as isize) < map[target_row].len() as isize
-                {
-                    search_directional(
-                        map, 
-                        target_row.saturating_add_signed(dir_row),
-                        target_col.saturating_add_signed(dir_col), 
-                        dir_row,
-                        dir_col,
-                        'S',
-                        accum,
-                    );
+    
+                'A' => {
+                    if target_row as isize + (dir_row as isize) >= 0
+                        && target_row as isize + (dir_row as isize) < map.len() as isize
+                        && target_col as isize + (dir_col as isize) >= 0
+                        && target_col as isize + (dir_col as isize) < map[target_row].len() as isize
+                    {
+                        search_directional(
+                            map, 
+                            target_row.saturating_add_signed(dir_row),
+                            target_col.saturating_add_signed(dir_col), 
+                            dir_row,
+                            dir_col,
+                            'S',
+                            accum,
+                        );
+                    }
                 }
+    
+                'S' => {
+                    accum.add_assign(1);
+                }
+    
+                _ => {}
             }
-
-            'S' => {
-                accum.add_assign(1);
-            }
-
-            _ => {}
         }
-    }
 }
 
 fn part1(input: &str) -> isize {
@@ -139,5 +139,30 @@ fn part1(input: &str) -> isize {
 }
 
 fn part2(input: &str) -> isize {
-    todo!()
+    let map = input
+        .lines()
+        .map(|l| l.chars().collect::<Vec<char>>())
+        .collect::<Vec<Vec<char>>>();
+    let mut count: isize = 0;
+
+    for row in 1..map.len() - 1 {
+        for column in 1..map[row].len() - 1 {
+            if map[row][column] == 'A' {
+                let check = [
+                    map[row - 1][column - 1],
+                    map[row - 1][column + 1],
+                    map[row + 1][column - 1],
+                    map[row + 1][column + 1],
+                ];
+                match check {
+                    ['M', 'M', 'S', 'S'] => count += 1,
+                    ['S', 'M', 'S', 'M'] => count += 1,
+                    ['S', 'S', 'M', 'M'] => count += 1,
+                    ['M', 'S', 'M', 'S'] => count += 1,
+                    _ => {}
+                }
+            }
+        }
+    }
+    return count;
 }
