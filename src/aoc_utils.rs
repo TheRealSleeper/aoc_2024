@@ -70,3 +70,71 @@ impl Args {
         my_args
     }
 }
+
+#[derive(Clone, Debug)]
+pub struct Grid<T> {
+    rows: usize,
+    columns: usize,
+    data: Vec<Vec<T>>,
+}
+
+#[allow(dead_code)]
+impl<T> Grid<T> {
+    /// Checks if grid contains a set of coordiantes
+    /// Uses isize to so that negative values don't need to be checked manually
+    pub fn contains(&self, r: isize, c: isize) -> bool {
+        (0..self.rows as isize).contains(&r) && (0..self.columns as isize).contains(&c)
+    }
+
+    pub fn new() -> Self {
+        Self {
+            rows: 0,
+            columns: 0,
+            data: vec![vec![]],
+        }
+    }
+    
+    /// Dimmensions of grid, in the form of (rows, columns)
+    pub fn dims(&self) -> (usize, usize) {
+        (self.rows, self.columns)
+    }
+    
+    /// Gets reference to item in grid
+    pub fn item_ref(&self, row: usize, column: usize) -> Option<&T> {
+        if self.contains(row as isize, column as isize) {
+            Some(&self.data[row][column])
+        } else {
+            None
+        }
+    }
+    
+    /// Gets mutable reference to item in grid
+    pub fn item_mut(&mut self, row: usize, column: usize) -> Option<&mut T> {
+        if self.contains(row as isize, column as isize) {
+            Some(&mut self.data[row][column])
+        } else {
+            None
+        }
+    } 
+    
+    /// Sets value of item in grid, ignores if coordinate is not contained
+    pub fn item_set(&mut self, row: usize, column: usize, value: T) {
+        if self.contains(row as isize, column as isize) {
+            self.data[row][column] = value; 
+        }
+    }
+}
+
+impl<T> From<Vec<Vec<T>>> for Grid<T> {
+    /// Assumes all rows have equal length
+    fn from(value: Vec<Vec<T>>) -> Self {
+        let rows = value.len();
+        let columns = value.get(0).unwrap_or(&Vec::new()).len();
+        let data = value;
+        Self {
+            rows,
+            columns,
+            data,
+        }
+    }
+}
