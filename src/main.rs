@@ -36,11 +36,39 @@ fn main() {
     }
 }
 
-
 fn part1(input: &str) -> isize {
-    todo!()
+    let blocks = input
+        .chars()
+        .collect::<Vec<char>>()
+        .chunks_exact(2)
+        .map(|c| (c[0].to_digit(10).unwrap() as u8, c[1].to_digit(10).unwrap() as u8))
+        .collect::<Vec<_>>();
+    
+    let mut uncompressed = vec![]; 
+    for (position, block) in blocks.iter().enumerate() {
+        for _ in 0..block.0 {
+            uncompressed.push(Some(position as u8)); 
+        }
+        for _ in 0..block.1 {
+            uncompressed.push(None); 
+        }
+    }
+    
+    let mut i = 0; 
+    while i < uncompressed.len() {
+        if let None = uncompressed[i] {
+            if let Some(end) = uncompressed.pop() {
+                if let Some(n) = end {
+                    uncompressed.insert(i, Some(n)); 
+                }
+            }
+        }
+        
+        i += 1;
+    }
+    
+    uncompressed.iter().enumerate().map(|(i, n)| i * n.unwrap_or(0) as usize).sum::<usize>() as isize
 }
-
 
 fn part2(input: &str) -> isize {
     todo!()

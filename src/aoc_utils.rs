@@ -93,12 +93,12 @@ impl<T> Grid<T> {
             data: vec![vec![]],
         }
     }
-    
+
     /// Dimmensions of grid, in the form of (rows, columns)
     pub fn dims(&self) -> (usize, usize) {
         (self.rows, self.columns)
     }
-    
+
     /// Gets reference to item in grid
     pub fn item_ref(&self, row: usize, column: usize) -> Option<&T> {
         if self.contains(row as isize, column as isize) {
@@ -107,7 +107,7 @@ impl<T> Grid<T> {
             None
         }
     }
-    
+
     /// Gets mutable reference to item in grid
     pub fn item_mut(&mut self, row: usize, column: usize) -> Option<&mut T> {
         if self.contains(row as isize, column as isize) {
@@ -115,12 +115,12 @@ impl<T> Grid<T> {
         } else {
             None
         }
-    } 
-    
+    }
+
     /// Sets value of item in grid, ignores if coordinate is not contained
     pub fn item_set(&mut self, row: usize, column: usize, value: T) {
         if self.contains(row as isize, column as isize) {
-            self.data[row][column] = value; 
+            self.data[row][column] = value;
         }
     }
 }
