@@ -7,7 +7,7 @@ fn test1() {
 
 #[test]
 fn test2() {
-    const ANSWER2: isize = 0;
+    const ANSWER2: isize = 2858;
     let sample2 = std::fs::read_to_string("sample2.txt").expect("Unable to read file");
     assert_eq!(super::part2(&sample2), ANSWER2);
 }
