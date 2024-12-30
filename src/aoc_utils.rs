@@ -1,4 +1,5 @@
 use std::env::args;
+use std::ops::Index;
 use std::process::exit;
 
 pub struct Args {
@@ -93,38 +94,75 @@ impl<T> Grid<T> {
             data: vec![vec![]],
         }
     }
-    
+
     /// Dimmensions of grid, in the form of (rows, columns)
-    pub fn dims(&self) -> (usize, usize) {
-        (self.rows, self.columns)
+    pub fn dims(&self) -> (isize, isize) {
+        (self.rows as isize, self.columns as isize)
     }
-    
+
     /// Gets reference to item in grid
-    pub fn item_ref(&self, row: usize, column: usize) -> Option<&T> {
+    pub fn item_ref(&self, row: isize, column: isize) -> Option<&T> {
         if self.contains(row as isize, column as isize) {
-            Some(&self.data[row][column])
+            Some(&self.data[row as usize][column as usize])
         } else {
             None
         }
     }
-    
+
     /// Gets mutable reference to item in grid
-    pub fn item_mut(&mut self, row: usize, column: usize) -> Option<&mut T> {
+    pub fn item_mut(&mut self, row: isize, column: isize) -> Option<&mut T> {
         if self.contains(row as isize, column as isize) {
-            Some(&mut self.data[row][column])
+            Some(&mut self.data[row as usize][column as usize])
         } else {
             None
         }
-    } 
-    
+    }
+
     /// Sets value of item in grid, ignores if coordinate is not contained
-    pub fn item_set(&mut self, row: usize, column: usize, value: T) {
+    pub fn item_set(&mut self, row: isize, column: isize, value: T) {
         if self.contains(row as isize, column as isize) {
-            self.data[row][column] = value; 
+            self.data[row as usize][column as usize] = value;
         }
     }
 }
 
+#[allow(dead_code)]
+impl<T: Copy> Grid<T> {
+    pub fn get(&self, row: isize, column: isize) -> Option<T> {
+        if self.contains(row as isize, column as isize) {
+            Some(self.data[row as usize][column as usize])
+        } else {
+            None
+        }
+    }
+}
+
+#[allow(dead_code)]
+impl<T: ToOwned> Grid<T> {
+    pub fn get_owned(&self, row: isize, column: isize) -> Option<<T as ToOwned>::Owned> {
+        if self.contains(row as isize, column as isize) {
+            Some(self.data[row as usize][column as usize].to_owned())
+        } else {
+            None
+        }
+    }
+}
+
+use std::ops::IndexMut;
+impl<T> Index<(usize, usize)> for Grid<T> {
+    type Output = T;
+    fn index(&self, index: (usize, usize)) -> &Self::Output {
+        &self.data[index.0][index.1]
+    }
+}
+
+impl<T> IndexMut<(usize, usize)> for Grid<T> {
+    fn index_mut(&mut self, index: (usize, usize)) -> &mut Self::Output {
+        &mut self.data[index.0][index.1]
+    }
+}
+
+#[allow(dead_code)]
 impl<T> From<Vec<Vec<T>>> for Grid<T> {
     /// Assumes all rows have equal length
     fn from(value: Vec<Vec<T>>) -> Self {
