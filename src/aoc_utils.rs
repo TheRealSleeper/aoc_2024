@@ -1,4 +1,5 @@
 use std::env::args;
+use std::ops::{Index, IndexMut};
 use std::process::exit;
 
 pub struct Args {
@@ -78,12 +79,145 @@ pub struct Grid<T> {
     data: Vec<Vec<T>>,
 }
 
-#[allow(dead_code)]
+#[derive(Debug, Clone, Copy)]
+pub enum Direction {
+    Up,
+    Down,
+    Left,
+    Right,
+}
+
+#[derive(Debug)]
+pub struct Position<'a, T> {
+    grid: &'a Grid<T>,
+    row: isize,
+    column: isize,
+    direction: Direction,
+}
+
+#[derive(Debug)]
+struct PositionMut<'a, T> {
+    grid: &'a mut Grid<T>,
+    row: isize,
+    column: isize,
+    direction: Direction,
+}
+
+impl<'a, T> Position<'a, T> {
+    /// Creates new Position object
+    fn new(grid: &'a Grid<T>, pos: (isize, isize)) -> Position<'a, T> {
+        Position {
+            grid,
+            row: pos.0,
+            column: pos.1,
+            direction: Direction::Up,
+        }
+    }
+
+    /// Moves up if that position exists and returns new location, else returns None
+    fn move_up(&mut self) -> Option<(isize, isize)> {
+        if self.grid.contains(self.row - 1, self.column) {
+            self.row -= 1;
+            Some((self.row, self.column))
+        } else {
+            None
+        }
+    }
+
+    /// Moves down if that position exists and returns new location, else returns None
+    fn move_down(&mut self) -> Option<(isize, isize)> {
+        if self.grid.contains(self.row + 1, self.column) {
+            self.row += 1;
+            Some((self.row, self.column))
+        } else {
+            None
+        }
+    }
+
+    /// Moves left if that position exists and returns new location, else returns None
+    fn move_left(&mut self) -> Option<(isize, isize)> {
+        if self.grid.contains(self.row, self.column - 1) {
+            self.column -= 1; 
+            Some((self.row, self.column))
+        } else {
+            None
+        }
+    }
+
+    /// Moves right if that position exists in returns new location, else return None
+    fn move_right(&mut self) -> Option<(isize, isize)> {
+        if self.grid.contains(self.row, self.column + 1) {
+            self.column += 1; 
+            Some((self.row, self.column)) 
+        } else {
+            None
+        }
+    }
+
+    /// Moves forward if possible and returns new position, else returns None
+    fn move_forward(&mut self) -> Option<(isize, isize)> {
+        match self.direction {
+            Direction::Up => self.move_up(), 
+            Direction::Down => self.move_down(), 
+            Direction::Left => self.move_left(), 
+            Direction::Right => self.move_right(), 
+        }
+    }
+    
+    /// Checks currently faced direction
+    fn get_direction(&self) -> Direction {
+        self.direction
+    }
+    
+    /// Sets new direction
+    fn set_direction(&mut self, direction: Direction) {
+        self.direction = direction
+    }
+    
+    /// Turns direction to the right and returns new direction
+    fn turn_right(&mut self) -> Direction {
+        match self.direction {
+            Direction::Up => self.direction = Direction::Right, 
+            Direction::Right => self.direction = Direction::Down, 
+            Direction::Down => self.direction = Direction::Left, 
+            Direction::Left => self.direction = Direction::Up, 
+        }
+        
+        self.direction
+    }
+    
+    /// Turns direction to the left and returns new direction
+        fn turn_left(&mut self) -> Direction {
+            match self.direction {
+                Direction::Down => self.direction = Direction::Right, 
+                Direction::Left => self.direction = Direction::Down, 
+                Direction::Up => self.direction = Direction::Left, 
+                Direction::Right => self.direction = Direction::Up, 
+            }
+            
+            self.direction
+        }
+    
+    fn get_position(&self) -> (isize, isize) {
+        (self.row, self.column)
+    }
+    
+    fn set_position(&mut self, position: (isize, isize)) -> bool {
+        if self.grid.contains(position.0, position.1) {
+            self.row = position.0; 
+            self.column = position.1; 
+            return true
+        } else {
+            return false
+        }
+    }
+}
+
 impl<T> Grid<T> {
     /// Checks if grid contains a set of coordiantes
     /// Uses isize to so that negative values don't need to be checked manually
     pub fn contains(&self, r: isize, c: isize) -> bool {
-        (0..self.rows as isize).contains(&r) && (0..self.columns as isize).contains(&c)
+        (0..self.rows).contains(&(r as usize)) && (0..self.columns).contains(&(c as usize))
     }
 
     pub fn new() -> Self {
@@ -93,40 +227,45 @@ impl<T> Grid<T> {
             data: vec![vec![]],
         }
     }
-    
+
     /// Dimmensions of grid, in the form of (rows, columns)
-    pub fn dims(&self) -> (usize, usize) {
-        (self.rows, self.columns)
+    pub fn dims(&self) -> (isize, isize) {
+        (self.rows as isize, self.columns as isize)
     }
-    
+
     /// Gets reference to item in grid
-    pub fn item_ref(&self, row: usize, column: usize) -> Option<&T> {
-        if self.contains(row as isize, column as isize) {
-            Some(&self.data[row][column])
+    pub fn item_ref(&self, row: isize, column: isize) -> Option<&T> {
+        if self.contains(row, column) {
+            Some(&self.data[row as usize][column as usize])
         } else {
             None
         }
     }
-    
+
     /// Gets mutable reference to item in grid
-    pub fn item_mut(&mut self, row: usize, column: usize) -> Option<&mut T> {
-        if self.contains(row as isize, column as isize) {
-            Some(&mut self.data[row][column])
+    pub fn item_mut(&mut self, row: isize, column: isize) -> Option<&mut T> {
+        if self.contains(row, column) {
+            Some(&mut self.data[row as usize][column as usize])
         } else {
             None
         }
-    } 
-    
+    }
+
     /// Sets value of item in grid, ignores if coordinate is not contained
-    pub fn item_set(&mut self, row: usize, column: usize, value: T) {
-        if self.contains(row as isize, column as isize) {
-            self.data[row][column] = value; 
+    pub fn item_set(&mut self, row: isize, column: isize, value: T) {
+        if self.contains(row, column) {
+            self.data[row as usize][column as usize] = value;
         }
+    }
+    
+    /// Creation Position object to traverse grid easily
+    pub fn traverse(&self, starting_position: (isize, isize)) -> Position<T> {
+        Position::new(&self, starting_position)
     }
 }
 
 impl<T> From<Vec<Vec<T>>> for Grid<T> {
-    /// Assumes all rows have equal length
+    /// Assumes all rows have equal length, allows easy creation of Grid from 2 dimmensional Vec
     fn from(value: Vec<Vec<T>>) -> Self {
         let rows = value.len();
         let columns = value.get(0).unwrap_or(&Vec::new()).len();
@@ -136,5 +275,19 @@ impl<T> From<Vec<Vec<T>>> for Grid<T> {
             columns,
             data,
         }
+    }
+}
+
+impl<T> Index<(usize, usize)> for Grid<T> {
+    type Output = T;
+
+    fn index(&self, index: (usize, usize)) -> &Self::Output {
+        &self.data[index.0][index.1]
+    }
+}
+
+impl<T> IndexMut<(usize, usize)> for Grid<T> {
+    fn index_mut(&mut self, index: (usize, usize)) -> &mut Self::Output {
+        &mut self.data[index.0][index.1]
     }
 }

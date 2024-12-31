@@ -1,4 +1,3 @@
-
 #[test]
 fn test1() {
     const ANSWER1: isize = 0;

@@ -1,5 +1,6 @@
 use std::fs::read_to_string;
 
+#[allow(dead_code)]
 mod aoc_utils;
 mod tests;
 
@@ -36,12 +37,10 @@ fn main() {
     }
 }
 
-
-fn part1(input: &str) -> isize {
+fn part1(_input: &str) -> isize {
     todo!()
 }
 
-
-fn part2(input: &str) -> isize {
+fn part2(_input: &str) -> isize {
     todo!()
 }
