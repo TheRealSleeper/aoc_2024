@@ -137,7 +137,7 @@ impl<'a, T> Position<'a, T> {
     /// Moves left if that position exists and returns new location, else returns None
     fn move_left(&mut self) -> Option<(isize, isize)> {
         if self.grid.contains(self.row, self.column - 1) {
-            self.column -= 1; 
+            self.column -= 1;
             Some((self.row, self.column))
         } else {
             None
@@ -147,8 +147,8 @@ impl<'a, T> Position<'a, T> {
     /// Moves right if that position exists in returns new location, else return None
     fn move_right(&mut self) -> Option<(isize, isize)> {
         if self.grid.contains(self.row, self.column + 1) {
-            self.column += 1; 
-            Some((self.row, self.column)) 
+            self.column += 1;
+            Some((self.row, self.column))
         } else {
             None
         }
@@ -157,58 +157,58 @@ impl<'a, T> Position<'a, T> {
     /// Moves forward if possible and returns new position, else returns None
     fn move_forward(&mut self) -> Option<(isize, isize)> {
         match self.direction {
-            Direction::Up => self.move_up(), 
-            Direction::Down => self.move_down(), 
-            Direction::Left => self.move_left(), 
-            Direction::Right => self.move_right(), 
+            Direction::Up => self.move_up(),
+            Direction::Down => self.move_down(),
+            Direction::Left => self.move_left(),
+            Direction::Right => self.move_right(),
         }
     }
-    
+
     /// Checks currently faced direction
     fn get_direction(&self) -> Direction {
         self.direction
     }
-    
+
     /// Sets new direction
     fn set_direction(&mut self, direction: Direction) {
         self.direction = direction
     }
-    
+
     /// Turns direction to the right and returns new direction
     fn turn_right(&mut self) -> Direction {
         match self.direction {
-            Direction::Up => self.direction = Direction::Right, 
-            Direction::Right => self.direction = Direction::Down, 
-            Direction::Down => self.direction = Direction::Left, 
-            Direction::Left => self.direction = Direction::Up, 
+            Direction::Up => self.direction = Direction::Right,
+            Direction::Right => self.direction = Direction::Down,
+            Direction::Down => self.direction = Direction::Left,
+            Direction::Left => self.direction = Direction::Up,
         }
-        
+
         self.direction
     }
-    
+
     /// Turns direction to the left and returns new direction
-        fn turn_left(&mut self) -> Direction {
-            match self.direction {
-                Direction::Down => self.direction = Direction::Right, 
-                Direction::Left => self.direction = Direction::Down, 
-                Direction::Up => self.direction = Direction::Left, 
-                Direction::Right => self.direction = Direction::Up, 
-            }
-            
-            self.direction
+    fn turn_left(&mut self) -> Direction {
+        match self.direction {
+            Direction::Down => self.direction = Direction::Right,
+            Direction::Left => self.direction = Direction::Down,
+            Direction::Up => self.direction = Direction::Left,
+            Direction::Right => self.direction = Direction::Up,
         }
-    
+
+        self.direction
+    }
+
     fn get_position(&self) -> (isize, isize) {
         (self.row, self.column)
     }
-    
+
     fn set_position(&mut self, position: (isize, isize)) -> bool {
         if self.grid.contains(position.0, position.1) {
-            self.row = position.0; 
-            self.column = position.1; 
-            return true
+            self.row = position.0;
+            self.column = position.1;
+            return true;
         } else {
-            return false
+            return false;
         }
     }
 }
@@ -257,7 +257,7 @@ impl<T> Grid<T> {
             self.data[row as usize][column as usize] = value;
         }
     }
-    
+
     /// Creation Position object to traverse grid easily
     pub fn traverse(&self, starting_position: (isize, isize)) -> Position<T> {
         Position::new(&self, starting_position)

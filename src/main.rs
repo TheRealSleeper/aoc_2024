@@ -1,4 +1,6 @@
+use std::collections::HashMap;
 use std::fs::read_to_string;
+use std::ops::AddAssign;
 
 #[allow(dead_code)]
 mod aoc_utils;
@@ -38,9 +40,65 @@ fn main() {
 }
 
 fn part1(_input: &str) -> isize {
-    todo!()
+    let mut stones: HashMap<usize, usize> = _input
+        .split_whitespace()
+        .map(|stone| (stone.parse::<usize>().unwrap(), 1))
+        .collect();
+    for _ in 0..25 {
+        let mut stones_new: HashMap<usize, usize> = HashMap::new();
+        for (stone, count) in stones {
+            if stone == 0 {
+                stones_new.entry(1).or_insert(0).add_assign(count);
+            } else if stone.to_string().chars().count() % 2 == 0 {
+                let stone_str = stone.to_string();
+                let stone1 = stone_str[0..stone_str.len() / 2].parse::<usize>().unwrap();
+                let stone2 = stone_str[stone_str.len() / 2..].parse::<usize>().unwrap();
+                stones_new.entry(stone1).or_insert(0).add_assign(count);
+                stones_new.entry(stone2).or_insert(0).add_assign(count);
+            } else {
+                stones_new
+                    .entry(stone * 2024)
+                    .or_insert(0)
+                    .add_assign(count);
+            }
+        }
+
+        stones = stones_new;
+    }
+
+    stones
+        .into_iter()
+        .fold(0, |total, (_, count)| total + count) as isize
 }
 
 fn part2(_input: &str) -> isize {
-    todo!()
+    let mut stones: HashMap<usize, usize> = _input
+        .split_whitespace()
+        .map(|stone| (stone.parse::<usize>().unwrap(), 1))
+        .collect();
+    for _ in 0..75 {
+        let mut stones_new: HashMap<usize, usize> = HashMap::new();
+        for (stone, count) in stones {
+            if stone == 0 {
+                stones_new.entry(1).or_insert(0).add_assign(count);
+            } else if stone.to_string().chars().count() % 2 == 0 {
+                let stone_str = stone.to_string();
+                let stone1 = stone_str[0..stone_str.len() / 2].parse::<usize>().unwrap();
+                let stone2 = stone_str[stone_str.len() / 2..].parse::<usize>().unwrap();
+                stones_new.entry(stone1).or_insert(0).add_assign(count);
+                stones_new.entry(stone2).or_insert(0).add_assign(count);
+            } else {
+                stones_new
+                    .entry(stone * 2024)
+                    .or_insert(0)
+                    .add_assign(count);
+            }
+        }
+
+        stones = stones_new;
+    }
+
+    stones
+        .into_iter()
+        .fold(0, |total, (_, count)| total + count) as isize
 }
