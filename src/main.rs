@@ -88,7 +88,7 @@ fn part2(_input: &str) -> isize {
             let mut left_side = false;
             let mut right_side = false;
             for r in 0..grid.dims().0 {
-                if !region.0.contains(&(r as isize, c as isize)) {
+                if !region.0.contains(&(r, c)) {
                     left_side = false;
                     right_side = false;
                     continue;
@@ -121,7 +121,7 @@ fn part2(_input: &str) -> isize {
             let mut top_side = false;
             let mut bottom_side = false;
             for c in 0..grid.dims().1 {
-                if !region.0.contains(&(r as isize, c as isize)) {
+                if !region.0.contains(&(r, c)) {
                     top_side = false;
                     bottom_side = false;
                     continue;
