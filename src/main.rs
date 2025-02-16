@@ -1,6 +1,5 @@
 use aoc_utils::Grid;
 use std::fs::read_to_string;
-use std::ops::AddAssign;
 
 #[allow(dead_code)]
 mod aoc_utils;
@@ -40,192 +39,182 @@ fn main() {
 }
 
 fn part1(_input: &str) -> isize {
-    let mut plots = Grid::from(
-        _input
-            .lines()
-            .map(|l| l.chars().map(|c| (c, false)).collect())
-            .collect::<Vec<Vec<(char, bool)>>>(),
-    );
-    let (rows, columns) = plots.dims();
-    let mut regions: Vec<(Vec<((isize, isize), usize)>, char)> = vec![];
-    for row in 0..rows {
-        for column in 0..columns {
-            if !plots[(row as usize, column as usize)].1 {
-                regions.push((Vec::new(), plots[(row as usize, column as usize)].0));
-                let plot_type = plots[(row as usize, column as usize)].0;
-                get_region(
-                    &mut plots,
-                    plot_type,
-                    (row, column),
-                    &mut regions.last_mut().unwrap().0,
-                );
+    let grid: Grid<char> = _input
+        .lines()
+        .map(|l| l.chars().collect())
+        .collect::<Vec<Vec<char>>>()
+        .into();
+    let regions = get_regions(&grid);
+
+    let mut total: isize = 0;
+    for i in 0..regions.len() {
+        let mut sum: isize = 0;
+        for plant in regions[i].0.iter() {
+            if !regions[i].0.contains(&(plant.0 - 1, plant.1)) {
+                sum += 1;
+            }
+            if !regions[i].0.contains(&(plant.0 + 1, plant.1)) {
+                sum += 1;
+            }
+            if !regions[i].0.contains(&(plant.0, plant.1 - 1)) {
+                sum += 1;
+            }
+            if !regions[i].0.contains(&(plant.0, plant.1 + 1)) {
+                sum += 1;
             }
         }
+        let region_total = sum * regions[i].0.len() as isize;
+        total += region_total;
     }
 
-    regions.into_iter().fold(0, |sum, region| {
-        sum + region.0.len()
-            * region
-                .0
-                .iter()
-                .fold(0, |perimeter, plot| perimeter + 4 - plot.1)
-    }) as isize
+    total
 }
 
 fn part2(_input: &str) -> isize {
-    let mut plots = Grid::from(
-        _input
-            .lines()
-            .map(|l| l.chars().map(|c| (c, false)).collect())
-            .collect::<Vec<Vec<(char, bool)>>>(),
-    );
-    let (rows, columns) = plots.dims();
-    let mut regions: Vec<(Vec<((isize, isize), usize)>, char)> = vec![];
-    for row in 0..rows {
-        for column in 0..columns {
-            if !plots[(row as usize, column as usize)].1 {
-                regions.push((Vec::new(), plots[(row as usize, column as usize)].0));
-                let plot_type = plots[(row as usize, column as usize)].0;
-                get_region(
-                    &mut plots,
-                    plot_type,
-                    (row, column),
-                    &mut regions.last_mut().unwrap().0,
-                );
-            }
-        }
-    }
-
-    let regions = regions
-        .into_iter()
-        .map(|r| {
-            (
-                r.0.into_iter()
-                    .map(|x| x.0)
-                    .collect::<Vec<(isize, isize)>>(),
-                r.1,
-            )
-        })
-        .collect::<Vec<(Vec<(isize, isize)>, char)>>();
-
-    let plots = _input
+    let grid: Grid<char> = _input
         .lines()
         .map(|l| l.chars().collect())
-        .collect::<Vec<Vec<char>>>();
+        .collect::<Vec<Vec<char>>>()
+        .into();
+    let regions = get_regions(&grid);
 
-    // let mut checked = vec![vec![false; plots[0].len()]; plots.len()];
     let mut total_price: isize = 0;
     for region in regions {
         let mut left_sides = 0;
         let mut right_sides = 0;
         let mut top_sides = 0;
-        let mut bot_sides = 0;
-        for c in 0..plots[0].len() {
+        let mut bottom_sides = 0;
+        for c in 0..grid.dims().1 {
             let mut left_side = false;
             let mut right_side = false;
-            for r in 0..plots.len() {
+            for r in 0..grid.dims().0 {
                 if !region.0.contains(&(r as isize, c as isize)) {
+                    left_side = false;
+                    right_side = false;
                     continue;
                 }
-                if c == 0 || plots[r][c - 1] != region.1 {
-                    if plots[r][c] == region.1 {
-                        if !left_side {
-                            left_sides += 1;
-                        }
-                        left_side = true;
-                    } else {
-                        left_side = false;
+                if (c == 0 || grid.item_ref(r, c - 1) != Some(&region.1))
+                    && grid.item_ref(r, c) == Some(&region.1)
+                {
+                    if !left_side {
+                        left_sides += 1;
                     }
+                    left_side = true;
+                } else {
+                    left_side = false;
                 }
 
-                if c + 1 >= plots[0].len() || plots[r][c + 1] != region.1 {
-                    if plots[r][c] == region.1 {
-                        if !right_side {
-                            right_sides += 1;
-                        }
-                        right_side = true;
-                    } else {
-                        right_side = false;
+                if (c + 1 >= grid.dims().1 || grid.item_ref(r, c + 1) != Some(&region.1))
+                    && grid.item_ref(r, c) == Some(&region.1)
+                {
+                    if !right_side {
+                        right_sides += 1;
                     }
+                    right_side = true;
+                } else {
+                    right_side = false;
                 }
             }
         }
 
-        for r in 0..plots.len() {
+        for r in 0..grid.dims().0 {
             let mut top_side = false;
-            let mut bot_side = false;
-            for c in 0..plots[0].len() {
+            let mut bottom_side = false;
+            for c in 0..grid.dims().1 {
                 if !region.0.contains(&(r as isize, c as isize)) {
+                    top_side = false;
+                    bottom_side = false;
                     continue;
                 }
-                if r == 0 || plots[r - 1][c] != region.1 {
-                    if plots[r][c] == region.1 {
-                        if !top_side {
-                            top_sides += 1;
-                        }
-                        top_side = true;
-                    } else {
-                        top_side = false;
+                if (r == 0 || grid.item_ref(r - 1, c) != Some(&region.1)) && grid.item_ref(r, c) == Some(&region.1) {
+                    if !top_side {
+                        top_sides += 1;
                     }
+                    top_side = true;
+                } else {
+                    top_side = false;
                 }
 
-                if r + 1 >= plots.len() || plots[r + 1][c] != region.1 {
-                    if plots[r][c] == region.1 {
-                        if !bot_side {
-                            bot_sides += 1;
-                        }
-                        bot_side = true;
-                    } else {
-                        bot_side = false;
+                if (r + 1 >= grid.dims().1 || grid.item_ref(r + 1, c) != Some(&region.1)) && grid.item_ref(r, c) == Some(&region.1) {
+                    if !bottom_side {
+                        bottom_sides += 1;
                     }
+                    bottom_side = true;
+                } else {
+                    bottom_side = false;
                 }
             }
         }
 
-        total_price += (left_sides + right_sides + top_sides + bot_sides) * region.0.len() as isize;
+        let region_total = (left_sides + right_sides + top_sides + bottom_sides) * region.0.len();
+        total_price += region_total as isize;
     }
 
     total_price
 }
 
-fn get_region(
-    plots: &mut Grid<(char, bool)>,
-    plot_type: char,
-    position: (isize, isize),
-    region_plots: &mut Vec<((isize, isize), usize)>,
-) {
-    if plots.item_ref(position.0, position.1).unwrap().0 == plot_type
-        && !plots.item_ref(position.0, position.1).unwrap().1
-    {
-        region_plots.push((position, 0));
-        plots.item_mut(position.0, position.1).unwrap().1 = true;
+fn get_regions(grid: &Grid<char>) -> Vec<(Vec<(isize, isize)>, char)> {
+    let mut regions: Vec<(Vec<(isize, isize)>, char)> = Vec::new();
+    let mut checked: Grid<bool> = Grid::from(vec![
+        vec![false; grid.dims().1 as usize];
+        grid.dims().0 as usize
+    ]);
+    let mut added: Option<char> = None;
 
-        if let Some(position_new) = plots.traverse(position).move_up() {
-            get_region(plots, plot_type, position_new, region_plots);
-            if plots.item_ref(position_new.0, position_new.1).unwrap().0 == plot_type {
-                region_plots.last_mut().unwrap().1.add_assign(1);
+    'search: loop {
+        let mut current_type = '-';
+        if let Some(c) = added {
+            current_type = c;
+            added = None;
+        }
+        let mut region = Vec::<(isize, isize)>::new();
+        if current_type != '-' {
+            region = regions.pop().unwrap().0;
+        }
+        for r in 0..grid.dims().0 {
+            for c in 0..grid.dims().1 {
+                if current_type == '-' && !*checked.item_ref(r, c).unwrap() {
+                    current_type = *grid.item_ref(r, c).unwrap();
+                    region.push((r, c));
+                    checked.item_set(r, c, true);
+                    continue;
+                } else if current_type == '-' || *checked.item_ref(r, c).unwrap() {
+                    continue;
+                }
+                if region.is_empty()
+                    && grid.item_ref(r, c) == Some(&current_type)
+                    && !*checked.item_ref(r, c).unwrap()
+                {
+                    region.push((r, c));
+                    checked.item_set(r, c, true);
+                } else if grid.item_ref(r, c).unwrap() == &current_type {
+                    let current_position = grid.traverse((r, c));
+                    if current_position.item_ref_up() == Some(&current_type)
+                        && checked.item_ref(r - 1, c) == Some(&true)
+                        || current_position.item_ref_down() == Some(&current_type)
+                            && checked.item_ref(r + 1, c) == Some(&true)
+                        || current_position.item_ref_left() == Some(&current_type)
+                            && checked.item_ref(r, c - 1) == Some(&true)
+                        || current_position.item_ref_right() == Some(&current_type)
+                            && checked.item_ref(r, c + 1) == Some(&true)
+                    {
+                        checked.item_set(r, c, true);
+                        region.push((r, c));
+                        if added.is_none() {
+                            added = Some(current_type);
+                        }
+                    }
+                }
             }
         }
-
-        if let Some(position_new) = plots.traverse(position).move_down() {
-            get_region(plots, plot_type, position_new, region_plots);
-            if plots.item_ref(position_new.0, position_new.1).unwrap().0 == plot_type {
-                region_plots.last_mut().unwrap().1.add_assign(1);
-            }
-        }
-
-        if let Some(position_new) = plots.traverse(position).move_left() {
-            get_region(plots, plot_type, position_new, region_plots);
-            if plots.item_ref(position_new.0, position_new.1).unwrap().0 == plot_type {
-                region_plots.last_mut().unwrap().1.add_assign(1);
-            }
-        }
-
-        if let Some(position_new) = plots.traverse(position).move_right() {
-            get_region(plots, plot_type, position_new, region_plots);
-            if plots.item_ref(position_new.0, position_new.1).unwrap().0 == plot_type {
-                region_plots.last_mut().unwrap().1.add_assign(1);
+        if current_type == '-' {
+            break 'search;
+        } else {
+            if !region.is_empty() {
+                regions.push((region, current_type));
             }
         }
     }
+
+    regions
 }

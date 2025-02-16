@@ -225,7 +225,7 @@ impl<'a, T> Position<'a, T> {
     }
 
     /// Gets reference to item immediately left of ```self```
-    pub fn item_ref_left(&self) -> Option<&T> {
+    pub fn item_ref_left_relative(&self) -> Option<&T> {
         match self.direction {
             Direction::Right => self.grid.item_ref(self.row - 1, self.column),
             Direction::Left => self.grid.item_ref(self.row + 1, self.column),
@@ -235,13 +235,33 @@ impl<'a, T> Position<'a, T> {
     }
 
     /// Gets reference to item immediately right of ```self```
-    pub fn item_ref_right(&self) -> Option<&T> {
+    pub fn item_ref_right_relative(&self) -> Option<&T> {
         match self.direction {
             Direction::Left => self.grid.item_ref(self.row - 1, self.column),
             Direction::Right => self.grid.item_ref(self.row + 1, self.column),
             Direction::Down => self.grid.item_ref(self.row, self.column - 1),
             Direction::Up => self.grid.item_ref(self.row, self.column + 1),
         }
+    }
+
+    /// Gets reference to item immediately above ```self```
+    pub fn item_ref_up(&self) -> Option<&T> {
+        self.grid.item_ref(self.row - 1, self.column)
+    }
+
+    /// Gets reference to item immediately above ```self```
+    pub fn item_ref_down(&self) -> Option<&T> {
+        self.grid.item_ref(self.row + 1, self.column)
+    }
+
+    /// Gets reference to item immediately above ```self```
+    pub fn item_ref_left(&self) -> Option<&T> {
+        self.grid.item_ref(self.row, self.column - 1)
+    }
+
+    /// Gets reference to item immediately above ```self```
+    pub fn item_ref_right(&self) -> Option<&T> {
+        self.grid.item_ref(self.row, self.column + 1)
     }
 
     /// Gets reference to item immediately behind ```self```
