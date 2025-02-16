@@ -213,52 +213,51 @@ impl<'a, T> Position<'a, T> {
             return false;
         }
     }
-    
+
     /// Gets reference to item immediately in front of ```self```
     pub fn item_ref_front(&self) -> Option<&T> {
         match self.direction {
-            Direction::Up => self.grid.item_ref(self.row - 1, self.column), 
-            Direction::Down => self.grid.item_ref(self.row + 1, self.column), 
-            Direction::Left => self.grid.item_ref(self.row, self.column - 1), 
-            Direction::Right => self.grid.item_ref(self.row, self.column + 1)
+            Direction::Up => self.grid.item_ref(self.row - 1, self.column),
+            Direction::Down => self.grid.item_ref(self.row + 1, self.column),
+            Direction::Left => self.grid.item_ref(self.row, self.column - 1),
+            Direction::Right => self.grid.item_ref(self.row, self.column + 1),
         }
     }
-    
+
     /// Gets reference to item immediately left of ```self```
     pub fn item_ref_left(&self) -> Option<&T> {
         match self.direction {
-            Direction::Right => self.grid.item_ref(self.row - 1, self.column), 
-            Direction::Left => self.grid.item_ref(self.row + 1, self.column), 
-            Direction::Up => self.grid.item_ref(self.row, self.column - 1), 
-            Direction::Down => self.grid.item_ref(self.row, self.column + 1)
+            Direction::Right => self.grid.item_ref(self.row - 1, self.column),
+            Direction::Left => self.grid.item_ref(self.row + 1, self.column),
+            Direction::Up => self.grid.item_ref(self.row, self.column - 1),
+            Direction::Down => self.grid.item_ref(self.row, self.column + 1),
         }
     }
-    
+
     /// Gets reference to item immediately right of ```self```
     pub fn item_ref_right(&self) -> Option<&T> {
         match self.direction {
-            Direction::Left => self.grid.item_ref(self.row - 1, self.column), 
-            Direction::Right => self.grid.item_ref(self.row + 1, self.column), 
-            Direction::Down => self.grid.item_ref(self.row, self.column - 1), 
-            Direction::Up => self.grid.item_ref(self.row, self.column + 1)
+            Direction::Left => self.grid.item_ref(self.row - 1, self.column),
+            Direction::Right => self.grid.item_ref(self.row + 1, self.column),
+            Direction::Down => self.grid.item_ref(self.row, self.column - 1),
+            Direction::Up => self.grid.item_ref(self.row, self.column + 1),
         }
     }
-    
+
     /// Gets reference to item immediately behind ```self```
     pub fn item_ref_back(&self) -> Option<&T> {
         match self.direction {
-            Direction::Down => self.grid.item_ref(self.row - 1, self.column), 
-            Direction::Up => self.grid.item_ref(self.row + 1, self.column), 
-            Direction::Right => self.grid.item_ref(self.row, self.column - 1), 
-            Direction::Left => self.grid.item_ref(self.row, self.column + 1)
+            Direction::Down => self.grid.item_ref(self.row - 1, self.column),
+            Direction::Up => self.grid.item_ref(self.row + 1, self.column),
+            Direction::Right => self.grid.item_ref(self.row, self.column - 1),
+            Direction::Left => self.grid.item_ref(self.row, self.column + 1),
         }
     }
-    
+
     pub fn item_ref(&self) -> &T {
         self.grid.item_ref(self.row, self.column).unwrap()
     }
 }
-
 
 impl<'a, T> PositionMut<'a, T> {
     /// Creates new Position object
@@ -368,93 +367,91 @@ impl<'a, T> PositionMut<'a, T> {
             return false;
         }
     }
-    
-    
+
     /// Gets reference to item immediately in front of ```self```
     pub fn item_ref_front(&self) -> Option<&T> {
         match self.direction {
-            Direction::Up => self.grid.item_ref(self.row - 1, self.column), 
-            Direction::Down => self.grid.item_ref(self.row + 1, self.column), 
-            Direction::Left => self.grid.item_ref(self.row, self.column - 1), 
-            Direction::Right => self.grid.item_ref(self.row, self.column + 1)
+            Direction::Up => self.grid.item_ref(self.row - 1, self.column),
+            Direction::Down => self.grid.item_ref(self.row + 1, self.column),
+            Direction::Left => self.grid.item_ref(self.row, self.column - 1),
+            Direction::Right => self.grid.item_ref(self.row, self.column + 1),
         }
     }
-    
+
     /// Gets reference to item immediately left of ```self```
     pub fn item_ref_left(&self) -> Option<&T> {
         match self.direction {
-            Direction::Right => self.grid.item_ref(self.row - 1, self.column), 
-            Direction::Left => self.grid.item_ref(self.row + 1, self.column), 
-            Direction::Up => self.grid.item_ref(self.row, self.column - 1), 
-            Direction::Down => self.grid.item_ref(self.row, self.column + 1)
+            Direction::Right => self.grid.item_ref(self.row - 1, self.column),
+            Direction::Left => self.grid.item_ref(self.row + 1, self.column),
+            Direction::Up => self.grid.item_ref(self.row, self.column - 1),
+            Direction::Down => self.grid.item_ref(self.row, self.column + 1),
         }
     }
-    
+
     /// Gets reference to item immediately right of ```self```
     pub fn item_ref_right(&self) -> Option<&T> {
         match self.direction {
-            Direction::Left => self.grid.item_ref(self.row - 1, self.column), 
-            Direction::Right => self.grid.item_ref(self.row + 1, self.column), 
-            Direction::Down => self.grid.item_ref(self.row, self.column - 1), 
-            Direction::Up => self.grid.item_ref(self.row, self.column + 1)
+            Direction::Left => self.grid.item_ref(self.row - 1, self.column),
+            Direction::Right => self.grid.item_ref(self.row + 1, self.column),
+            Direction::Down => self.grid.item_ref(self.row, self.column - 1),
+            Direction::Up => self.grid.item_ref(self.row, self.column + 1),
         }
     }
-    
+
     /// Gets reference to item immediately behind ```self```
     pub fn item_ref_back(&self) -> Option<&T> {
         match self.direction {
-            Direction::Down => self.grid.item_ref(self.row - 1, self.column), 
-            Direction::Up => self.grid.item_ref(self.row + 1, self.column), 
-            Direction::Right => self.grid.item_ref(self.row, self.column - 1), 
-            Direction::Left => self.grid.item_ref(self.row, self.column + 1)
+            Direction::Down => self.grid.item_ref(self.row - 1, self.column),
+            Direction::Up => self.grid.item_ref(self.row + 1, self.column),
+            Direction::Right => self.grid.item_ref(self.row, self.column - 1),
+            Direction::Left => self.grid.item_ref(self.row, self.column + 1),
         }
     }
-    
+
     /// Gets mutable reference to item immediately in front of ```self```
     pub fn item_mut_front(&mut self) -> Option<&mut T> {
         match self.direction {
-            Direction::Up => self.grid.item_mut(self.row - 1, self.column), 
-            Direction::Down => self.grid.item_mut(self.row + 1, self.column), 
-            Direction::Left => self.grid.item_mut(self.row, self.column - 1), 
-            Direction::Right => self.grid.item_mut(self.row, self.column + 1)
+            Direction::Up => self.grid.item_mut(self.row - 1, self.column),
+            Direction::Down => self.grid.item_mut(self.row + 1, self.column),
+            Direction::Left => self.grid.item_mut(self.row, self.column - 1),
+            Direction::Right => self.grid.item_mut(self.row, self.column + 1),
         }
     }
-    
+
     /// Gets mutable reference to item immediately left of ```self```
     pub fn item_mut_left(&mut self) -> Option<&mut T> {
         match self.direction {
-            Direction::Right => self.grid.item_mut(self.row - 1, self.column), 
-            Direction::Left => self.grid.item_mut(self.row + 1, self.column), 
-            Direction::Up => self.grid.item_mut(self.row, self.column - 1), 
-            Direction::Down => self.grid.item_mut(self.row, self.column + 1)
+            Direction::Right => self.grid.item_mut(self.row - 1, self.column),
+            Direction::Left => self.grid.item_mut(self.row + 1, self.column),
+            Direction::Up => self.grid.item_mut(self.row, self.column - 1),
+            Direction::Down => self.grid.item_mut(self.row, self.column + 1),
         }
     }
-    
+
     /// Gets mutable reference to item immediately right of ```self```
     pub fn item_mut_right(&mut self) -> Option<&mut T> {
         match self.direction {
-            Direction::Left => self.grid.item_mut(self.row - 1, self.column), 
-            Direction::Right => self.grid.item_mut(self.row + 1, self.column), 
-            Direction::Down => self.grid.item_mut(self.row, self.column - 1), 
-            Direction::Up => self.grid.item_mut(self.row, self.column + 1)
+            Direction::Left => self.grid.item_mut(self.row - 1, self.column),
+            Direction::Right => self.grid.item_mut(self.row + 1, self.column),
+            Direction::Down => self.grid.item_mut(self.row, self.column - 1),
+            Direction::Up => self.grid.item_mut(self.row, self.column + 1),
         }
     }
-    
+
     /// Gets mutable reference to item immediately behind ```self```
     pub fn item_mut_back(&mut self) -> Option<&mut T> {
         match self.direction {
-            Direction::Down => self.grid.item_mut(self.row - 1, self.column), 
-            Direction::Up => self.grid.item_mut(self.row + 1, self.column), 
-            Direction::Right => self.grid.item_mut(self.row, self.column - 1), 
-            Direction::Left => self.grid.item_mut(self.row, self.column + 1)
+            Direction::Down => self.grid.item_mut(self.row - 1, self.column),
+            Direction::Up => self.grid.item_mut(self.row + 1, self.column),
+            Direction::Right => self.grid.item_mut(self.row, self.column - 1),
+            Direction::Left => self.grid.item_mut(self.row, self.column + 1),
         }
     }
-    
+
     pub fn item_ref(&self) -> &T {
         self.grid.item_ref(self.row, self.column).unwrap()
     }
 }
-
 
 impl<T> Grid<T> {
     /// Checks if grid contains a set of coordiantes
@@ -504,6 +501,10 @@ impl<T> Grid<T> {
     /// Creation Position object to traverse grid easily
     pub fn traverse(&self, starting_position: (isize, isize)) -> Position<T> {
         Position::new(&self, starting_position)
+    }
+
+    pub fn into_vec(self) -> Vec<Vec<T>> {
+        self.data
     }
 }
 

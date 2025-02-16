@@ -1,7 +1,6 @@
+use aoc_utils::Grid;
 use std::fs::read_to_string;
 use std::ops::AddAssign;
-
-use aoc_utils::Grid;
 
 #[allow(dead_code)]
 mod aoc_utils;
@@ -96,37 +95,97 @@ fn part2(_input: &str) -> isize {
             }
         }
     }
-    
-    let mut sides = vec![]; 
-    for region in regions.iter() {
-        let mut current_sides: usize = 0; 
-        let starting_position = region.0[0].0; 
-        let mut traverser = plots.traverse(starting_position); 
-        traverser.set_direction(aoc_utils::Direction::Right); 
-        let plot_type = traverser.item_ref().0; 
-        
-        while (traverser.get_position(), traverser.get_direction()) != ((starting_position, aoc_utils::Direction::Right)) {
-            if let Some(item) = traverser.item_ref_left() {
-                if item.0 == plot_type {
-                    traverser.turn_left(); 
-                    current_sides += 1; 
+
+    let regions = regions
+        .into_iter()
+        .map(|r| {
+            (
+                r.0.into_iter()
+                    .map(|x| x.0)
+                    .collect::<Vec<(isize, isize)>>(),
+                r.1,
+            )
+        })
+        .collect::<Vec<(Vec<(isize, isize)>, char)>>();
+
+    let plots = _input
+        .lines()
+        .map(|l| l.chars().collect())
+        .collect::<Vec<Vec<char>>>();
+
+    // let mut checked = vec![vec![false; plots[0].len()]; plots.len()];
+    let mut total_price: isize = 0;
+    for region in regions {
+        let mut left_sides = 0;
+        let mut right_sides = 0;
+        let mut top_sides = 0;
+        let mut bot_sides = 0;
+        for c in 0..plots[0].len() {
+            let mut left_side = false;
+            let mut right_side = false;
+            for r in 0..plots.len() {
+                if !region.0.contains(&(r as isize, c as isize)) {
+                    continue;
                 }
-            } else if let Some(item) = traverser.item_ref_right() {
-                if item.0 == plot_type {
-                    traverser.turn_right(); 
-                    current_sides += 1; 
+                if c == 0 || plots[r][c - 1] != region.1 {
+                    if plots[r][c] == region.1 {
+                        if !left_side {
+                            left_sides += 1;
+                        }
+                        left_side = true;
+                    } else {
+                        left_side = false;
+                    }
                 }
-            } else if let Some(item) = traverser.item_ref_front() {
-                if item.0 == plot_type {
-                    traverser.move_forward(); 
+
+                if c + 1 >= plots[0].len() || plots[r][c + 1] != region.1 {
+                    if plots[r][c] == region.1 {
+                        if !right_side {
+                            right_sides += 1;
+                        }
+                        right_side = true;
+                    } else {
+                        right_side = false;
+                    }
                 }
             }
         }
-        
-        sides.push(current_sides); 
+
+        for r in 0..plots.len() {
+            let mut top_side = false;
+            let mut bot_side = false;
+            for c in 0..plots[0].len() {
+                if !region.0.contains(&(r as isize, c as isize)) {
+                    continue;
+                }
+                if r == 0 || plots[r - 1][c] != region.1 {
+                    if plots[r][c] == region.1 {
+                        if !top_side {
+                            top_sides += 1;
+                        }
+                        top_side = true;
+                    } else {
+                        top_side = false;
+                    }
+                }
+
+                if r + 1 >= plots.len() || plots[r + 1][c] != region.1 {
+                    if plots[r][c] == region.1 {
+                        if !bot_side {
+                            bot_sides += 1;
+                        }
+                        bot_side = true;
+                    } else {
+                        bot_side = false;
+                    }
+                }
+            }
+        }
+
+        total_price += (left_sides + right_sides + top_sides + bot_sides) * region.0.len() as isize;
     }
-    
-    sides.into_iter().zip(regions.into_iter()).map(|(sides, (positions, _))| sides * positions.len()).sum::<usize>() as isize
+
+    total_price
 }
 
 fn get_region(
@@ -135,7 +194,9 @@ fn get_region(
     position: (isize, isize),
     region_plots: &mut Vec<((isize, isize), usize)>,
 ) {
-    if plots.item_ref(position.0, position.1).unwrap().0 == plot_type && !plots.item_ref(position.0, position.1).unwrap().1 {
+    if plots.item_ref(position.0, position.1).unwrap().0 == plot_type
+        && !plots.item_ref(position.0, position.1).unwrap().1
+    {
         region_plots.push((position, 0));
         plots.item_mut(position.0, position.1).unwrap().1 = true;
 
@@ -150,7 +211,7 @@ fn get_region(
             get_region(plots, plot_type, position_new, region_plots);
             if plots.item_ref(position_new.0, position_new.1).unwrap().0 == plot_type {
                 region_plots.last_mut().unwrap().1.add_assign(1);
-            }        
+            }
         }
 
         if let Some(position_new) = plots.traverse(position).move_left() {
