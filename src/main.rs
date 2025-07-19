@@ -9,10 +9,9 @@ fn main() {
     let sample1 = read_to_string("sample1.txt").expect("Unable to read file");
     let sample2 = read_to_string("sample2.txt").expect("Unable to read file");
 
-    let content = match args.path {
-        None => None,
-        Some(p) => Some(read_to_string(&p).expect("input: Could not open file")),
-    };
+    let content = args
+        .path
+        .map(|p| read_to_string(&p).expect("input: Could not open file"));
 
     if args.part1 {
         println!(
