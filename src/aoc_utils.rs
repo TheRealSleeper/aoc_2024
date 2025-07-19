@@ -36,9 +36,9 @@ impl Args {
                                 Some(env_args.next().expect("Input argument missing").to_string())
                         }
                         "sample" => my_args.sample = true,
-                        "help" => println!("{}", HELP),
+                        "help" => println!("{HELP}"),
                         _ => {
-                            println!("Unrecognized option {}", a);
+                            println!("Unrecognized option {a}");
                             exit(1);
                         }
                     }
@@ -54,16 +54,16 @@ impl Args {
                                 )
                             }
                             's' => my_args.sample = true,
-                            'h' => println!("{}", HELP),
+                            'h' => println!("{HELP}"),
                             _ => {
-                                println!("Unrecognized option {}", a);
+                                println!("Unrecognized option {a}");
                                 exit(1);
                             }
                         }
                     }
                 }
             } else {
-                println!("Invalid option '{}' given", a);
+                println!("Invalid option '{a}' given");
                 exit(1);
             }
         }
@@ -208,9 +208,9 @@ impl<'a, T> Position<'a, T> {
         if self.grid.contains(position.0, position.1) {
             self.row = position.0;
             self.column = position.1;
-            return true;
+            true
         } else {
-            return false;
+            false
         }
     }
 
@@ -281,8 +281,8 @@ impl<'a, T> Position<'a, T> {
 
 impl<'a, T> PositionMut<'a, T> {
     /// Creates new Position object
-    fn new(grid: &'a mut Grid<T>, pos: (isize, isize)) -> Position<'a, T> {
-        Position {
+    fn new(grid: &'a mut Grid<T>, pos: (isize, isize)) -> PositionMut<'a, T> {
+        PositionMut {
             grid,
             row: pos.0,
             column: pos.1,
@@ -382,9 +382,9 @@ impl<'a, T> PositionMut<'a, T> {
         if self.grid.contains(position.0, position.1) {
             self.row = position.0;
             self.column = position.1;
-            return true;
+            true
         } else {
-            return false;
+            false
         }
     }
 
@@ -520,7 +520,7 @@ impl<T> Grid<T> {
 
     /// Creation Position object to traverse grid easily
     pub fn traverse(&self, starting_position: (isize, isize)) -> Position<T> {
-        Position::new(&self, starting_position)
+        Position::new(self, starting_position)
     }
 
     pub fn into_vec(self) -> Vec<Vec<T>> {
@@ -532,7 +532,7 @@ impl<T> From<Vec<Vec<T>>> for Grid<T> {
     /// Assumes all rows have equal length, allows easy creation of Grid from 2 dimmensional Vec
     fn from(value: Vec<Vec<T>>) -> Self {
         let rows = value.len();
-        let columns = value.get(0).unwrap_or(&Vec::new()).len();
+        let columns = value.first().unwrap_or(&Vec::new()).len();
         let data = value;
         Self {
             rows,
