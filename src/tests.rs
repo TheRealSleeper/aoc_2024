@@ -1,8 +1,11 @@
 #[test]
 fn test1() {
-    const ANSWER1: isize = 0;
-    let sample1 = std::fs::read_to_string("sample1.txt").expect("Unable to read file");
-    assert_eq!(super::part1(&sample1), ANSWER1);
+    const ANSWER1A: isize = 2028;
+    const ANSWER1B: isize = 10092;
+    let sample1a = std::fs::read_to_string("sample1a.txt").expect("Unable to read file");
+    let sample1b = std::fs::read_to_string("sample1b.txt").expect("Unable to read file");
+    assert_eq!(super::part1(&sample1a), ANSWER1A);
+    assert_eq!(super::part1(&sample1b), ANSWER1B);
 }
 
 #[test]
