@@ -88,6 +88,17 @@ pub enum Direction {
     Right,
 }
 
+impl std::fmt::Display for Direction {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", match self {
+            Direction::Down => "Down", 
+            Direction::Left => "Left", 
+            Direction::Right => "Right", 
+            Direction::Up => "Up"
+        })
+    }
+}
+
 /// Allows easy traversal of ```Grid<T>```
 #[derive(Debug, Clone)]
 pub struct Position<'a, T> {
