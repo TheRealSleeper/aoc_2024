@@ -4,17 +4,41 @@
 // see: https://zed.dev/docs/debugger
 [
   {
-    "label": "Debug Test 1", 
+    "label": "Debug Test 1",
     "build": {
-      "command": "cargo", 
+      "command": "cargo",
       "args": [
-        "test", 
-        "test1"
+        "test",
+        "test1",
+        "--",
+        "--no-capture",
+        "--no-run"
       ]
-    }, 
-    "program": "${ZED_WORKTREE_ROOT}/target/debug/binary", 
-    "sourceLanguages": ["rust"], 
-    "request": "launch", 
+    },
+    "program": "${ZED_WORKTREE_ROOT}/target/debug/deps/aoc_2024_rust-d6cd7e81d73b86ad",
+    "sourceLanguages": [
+      "rust"
+    ],
+    "request": "launch",
+    "adapter": "CodeLLDB"
+  },
+  {
+    "label": "Debug Test 2",
+    "build": {
+      "command": "cargo",
+      "args": [
+        "test",
+        "test2",
+        "--no-run",
+        "--",
+        "--no-capture"
+      ]
+    },
+    "program": "${ZED_WORKTREE_ROOT}/target/debug/deps/aoc_2024_rust-d6cd7e81d73b86ad",
+    "sourceLanguages": [
+      "rust"
+    ],
+    "request": "launch",
     "adapter": "CodeLLDB"
   }
 ]
